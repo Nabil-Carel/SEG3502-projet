@@ -94,6 +94,7 @@ public class SignInBean implements Serializable {
         //user = findUser(emailId);
         //userProfileBean.setUser(userProfileBean.findUser(emailId) );
         setUser(getUserProfileBean().findUser(getEmailId()));
+        userProfileBean.setUser(user);
 
         String accountInfo = null;
 
