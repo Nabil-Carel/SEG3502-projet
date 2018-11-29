@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>Account Menu</title>
+    </h:head>
+    <h:body>
+        <p:tooltip showEvent="focus" hideEvent="blur"  />
+        <p:growl autoUpdate="true"/>
+        <h:form>
+            <p:messages id="messages" showDetail="true" closable="true">
+                <p:autoUpdate />
+            </p:messages> 
+            <p:panel >
+                <p:tab title="Account Menu">
+                    <p:panel id="Account" header="Account">
+                        <h:panelGrid  columns="1">
+                            <p:commandButton id="deleteAccount" action="#{accountMenuBean.deleteAccount()}" value="Delete Account" />
+                            <p:commandButton id="viewAccount" action="#{signInBean.viewAccount()}" value="View Account" />
+                            <p:commandButton id="logout" action="#{userProfileBean.logout()}" value="Logout" />                           
+                        </h:panelGrid>
+
+
+
+                    </p:panel>
+
+
+                </p:tab>
+                <p:tab title="Properties">
+                    <p:panel id="Properties" header="Properties">
+                        <h:panelGrid columns="1">
+                            <p:commandButton id="addProperty" action="#{accountMenuBean.addProperty()}" value="Add Property" /> 
+                            <p:commandButton id="searchProperty" action="#{accountMenuBean.searchProperty()}" value="Search Property" />
+                            <p:commandButton id="browsePropertiesByLocation" action="#{accountMenuBean.browsePropertiesByLocation()}" value="Browse properties by location" />
+                            <p:commandButton id="viewVisitingList" action="#{accountMenuBean.viewVisitingList()}" value="View Visiting List" />
+                            <p:commandButton id="viewProperties" action="#{accountMenuBean.viewProperties()}" value="View Properties" />
+                            <p:commandButton id="viewVisitHistory" action="#{accountMenuBean.viewVisitHistory()}" value="View Visiting History" />
+                        </h:panelGrid>
+                    </p:panel>
+
+                    <p:commandButton id="backToMenu" action="#{accountMenuBean.backToMenu()}" value="Back to Menu" />
+                </p:tab>
+
+            </p:panel >
+        </h:form>
+
+
+
+
+
+
+    </h:body>
+</html>
