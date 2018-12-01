@@ -5,7 +5,7 @@
  */
 package beans;
 
-import java.io.ByteArrayInputStream;
+
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -19,6 +19,8 @@ import javax.faces.context.FacesContext;
 @Named(value = "accountMenuBean")
 @SessionScoped
 public class AccountMenuBean implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Creates a new instance of AccountMenuBean

@@ -59,7 +59,7 @@ import persistence.Property;
 
 public class UserProfileBean implements Serializable {
 
-    private static long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
    
     /**
@@ -334,14 +334,14 @@ public class UserProfileBean implements Serializable {
 
     public StreamedContent getStreamedImage() {
         FacesContext context = FacesContext.getCurrentInstance();
-       
+       System.out.println("context");
         if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
             return new DefaultStreamedContent();
         } else {
-            
-            String name = context.getExternalContext().getRequestParameterMap().get("id");
-            System.out.println("id  -- "+name);
-            Image image = getEm().find(Image.class,Long.parseLong(name));
+           
+            String id = context.getExternalContext().getRequestParameterMap().get("id");
+            System.out.println("id  -- "+id);
+            Image image = getEm().find(Image.class,Long.parseLong(id));
             //System.out.println(image);
 
             return new DefaultStreamedContent(
@@ -391,9 +391,9 @@ public class UserProfileBean implements Serializable {
         try {
             persist(profile);
             setUser(profile);
-           // signInBean.setUser(user);
-            //signInBean.setInputPassword(password);
-            //signInBean.setEmailId(emailId);
+            signInBean.setUser(user);
+            signInBean.setInputPassword(password);
+            signInBean.setEmailId(emailId);
             
             String msg = "User Profile Created Successfully";
             userAccountMenu = "Account Menu";
@@ -453,6 +453,8 @@ public class UserProfileBean implements Serializable {
         query.setParameter("userEmail", email);
         return performQuery(query);
     }
+    
+    
     @SuppressWarnings("unchecked")
      public ArrayList<Property> findProperty(EntityManager em, String email) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -507,8 +509,9 @@ public class UserProfileBean implements Serializable {
         if (isEmailAlreadyInDB()) {
             setEmailAlreadyInDB(false);   //reset in case user goes back
             FacesMessage msg;
-            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Loggin Error", "Email already used!");
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN,"Email already used!","");
             FacesContext.getCurrentInstance().addMessage(null, msg);
+             
             //return "confirm";
             return event.getOldStep();
         } else {
@@ -541,7 +544,7 @@ public class UserProfileBean implements Serializable {
             
         } else {
             loggedIn = false;
-            message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Loggin Error", "Invalid email or password!");
+            message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error", "Invalid email or password!");
             accountInfo = "signIn";
         }
 
@@ -718,12 +721,7 @@ public class UserProfileBean implements Serializable {
         return serialVersionUID;
     }
 
-    /**
-     * @param aSerialVersionUID the serialVersionUID to set
-     */
-    public static void setSerialVersionUID(long aSerialVersionUID) {
-        serialVersionUID = aSerialVersionUID;
-    }
+ 
 
     /**
      * @return the properties
@@ -800,6 +798,10 @@ public class UserProfileBean implements Serializable {
      */
     public void setImagesIds(ArrayList<String> imagesIds) {
         this.imagesIds = imagesIds;
+    }
+    
+    public String backToMenu(){
+        return "menu";
     }
 
 }

@@ -6,7 +6,6 @@
 package beans;
 
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -20,13 +19,11 @@ import java.util.Collection;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.faces.event.PhaseId;
 import javax.inject.Inject;
 
 
 
 import org.primefaces.PrimeFaces;
-import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import persistence.Image;
 import persistence.UserProfile;
@@ -42,6 +39,7 @@ import persistence.UserProfile;
 public class SignInBean implements Serializable {
 
     private static String emailId;
+    private static final long serialVersionUID = 1L;
 
     private String inputPassword;
     private static UserProfile user;
@@ -153,7 +151,7 @@ public class SignInBean implements Serializable {
      * @param emailId the emailId to set
      */
     public void setEmailId(String emailId) {
-        this.emailId = emailId;
+        SignInBean.emailId = emailId;
     }
 
     /**
@@ -181,7 +179,7 @@ public class SignInBean implements Serializable {
      * @param user the user to set
      */
     public void setUser(UserProfile user) {
-        this.user = user;
+        SignInBean.user = user;
     }
 
     /**
@@ -199,11 +197,6 @@ public class SignInBean implements Serializable {
     }
 
     /**
-     * @param imagesArray the imagesArray to set
-     *
-     *
-     *
-     * /
      **
      * @return the imagesList
      */

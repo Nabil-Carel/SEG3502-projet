@@ -19,17 +19,16 @@ import java.util.logging.Logger;
 import javax.annotation.ManagedBean;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
-import javax.enterprise.context.ConversationScoped;
 
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ViewScoped;
+
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
 import javax.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.primefaces.event.FileUploadEvent;
-import org.primefaces.event.FlowEvent;
+
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
@@ -42,7 +41,7 @@ import persistence.Property;
  * @author nabil
  */
 @Named(value = "addPropertyBean")
-@ManagedBean
+//@ManagedBean
 @SessionScoped
 public class AddPropertyBean implements Serializable {
 
@@ -101,8 +100,8 @@ public class AddPropertyBean implements Serializable {
         try {
             byte[] contents = IOUtils.toByteArray(uploadedFile.getInputstream()); // uploadedFile.getContents() doesn't work as expected
             //byte[] contents = uploadedFile.getContents();
-            String type = uploadedFile.getContentType();
-            Image image = new Image(contents, type);
+            String fileType = uploadedFile.getContentType();
+            Image image = new Image(contents, fileType);
             String filename = uploadedFile.getFileName();
             getImagesCollection().add(image);
             getImages().put(filename, image);
