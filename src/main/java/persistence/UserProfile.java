@@ -57,9 +57,9 @@ public class UserProfile implements Serializable {
     @JoinColumn(name="USER_ADDRESS",
             referencedColumnName="id")
     private Address address;
-    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER, 
-            mappedBy="user")
-    private Collection<Image> pictures;
+    //@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER, 
+   //         mappedBy="user")
+   // private Collection<Image> pictures;
     private ArrayList<Property> userProperties;
     
     public UserProfile() {
@@ -77,7 +77,7 @@ public class UserProfile implements Serializable {
         this.dob = dob;
         this.address = address;
         this.bio = bio;
-        this.pictures = new ArrayList<>();
+//        this.pictures = new ArrayList<>();
     }
     
     public String getEmaild() {
@@ -211,20 +211,20 @@ public class UserProfile implements Serializable {
     /**
      * @return the pictures
      */
-    public Collection<Image> getPictures() {
-        return pictures;
-    }
+   // public Collection<Image> getPictures() {
+//        return pictures;
+   // }
 
     /**
      * @param pictures the pictures to set
      */
-    public void setPictures(Collection<Image> pictures) {
-        this.pictures = pictures;
-    }
+   // public void setPictures(Collection<Image> pictures) {
+   //     this.pictures = pictures;
+  //  }
 
-    public void addPicture(Image pim) {
-        this.getPictures().add(pim);
-    }
+   // public void addPicture(Image pim) {
+       //this.getPictures().add(pim);
+   // }
 
     /**
      * @return the emailId

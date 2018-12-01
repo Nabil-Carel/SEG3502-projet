@@ -17,7 +17,7 @@
                     <p:panel id="Confirmation" header="Account Info">
                         <h:panelGrid  columns="4">
                             <h:outputText style="font-weight:bold" value="EmailId: " />
-                            <h:outputText value="#{userProfileBean.emailId}" />
+                            <h:outputText value="#{userProfileBean.getUser().getEmailId()}" />
                             <h:outputText style="font-weight:bold" value="FirstName: " />
                             <h:outputText value="#{userProfileBean.getUser().getFirstName()}"/>
                             <h:outputText style="font-weight:bold" value="LastName: " />

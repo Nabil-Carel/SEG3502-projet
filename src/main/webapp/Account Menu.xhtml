@@ -37,7 +37,7 @@
                             <p:commandButton id="searchProperty" action="#{accountMenuBean.searchProperty()}" value="Search Property" />
                             <p:commandButton id="browsePropertiesByLocation" action="#{accountMenuBean.browsePropertiesByLocation()}" value="Browse properties by location" />
                             <p:commandButton id="viewVisitingList" action="#{accountMenuBean.viewVisitingList()}" value="View Visiting List" />
-                            <p:commandButton id="viewProperties" action="#{accountMenuBean.viewProperties()}" value="View Properties" />
+                            <p:commandButton id="viewProperties" action="#{userProfileBean.loadProperties()}" value="View Properties" />
                             <p:commandButton id="viewVisitHistory" action="#{accountMenuBean.viewVisitHistory()}" value="View Visiting History" />
                         </h:panelGrid>
                     </p:panel>
