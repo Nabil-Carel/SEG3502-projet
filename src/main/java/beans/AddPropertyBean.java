@@ -5,20 +5,33 @@
  */
 package beans;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.ManagedBean;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Conversation;
+import javax.enterprise.context.ConversationScoped;
+
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.PhaseId;
+
 import javax.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.FlowEvent;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 import persistence.Address;
 import persistence.Image;
@@ -29,9 +42,12 @@ import persistence.Property;
  * @author nabil
  */
 @Named(value = "addPropertyBean")
+@ManagedBean
 @SessionScoped
 public class AddPropertyBean implements Serializable {
-    
+
+    private static final long serialVersionUID = 1L;
+
     private int numberOfBedrooms;
     private int numberOfBathrooms;
     private String type;
@@ -51,36 +67,73 @@ public class AddPropertyBean implements Serializable {
     private int imagesArrayIndex = 0;
     @Inject
     private UserProfileBean userProfileBean;
-    private Map<String, UserProfileBean.Image> images;
+    private Map<String, Image> images;
+    @Inject
+    private Conversation conversation;
     /**
      * Creates a new instance of AddPropertyBean
      */
     public AddPropertyBean() {
         imagesCollection = new ArrayList<>(5);
+        images = new HashMap<>();
     }
     
-    public String addProperty(){
+    @PostConstruct
+    public void init() {
+       // conversation.begin();
+    }
+
+    public String addProperty() {
         Address address = new Address(getNumber(), getStreet(), getUnit(), getCity(), getProvince(), getPostalCode());
-        Property property = new Property(getNumberOfBedrooms(), getNumberOfBathrooms(),getRent(), getPropertyName(), address);
+        //System.out.println("address   "+address.getId());
+        Property property = new Property(getNumberOfBedrooms(), getNumberOfBathrooms(), getRent(), getPropertyName(), address);
+
         property.setPictures(getImagesCollection());
         property.setOwner(getUserProfileBean().getUser().getEmailId());
-        userProfileBean.persist(property);
+        getUserProfileBean().persist(property);
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Property Successfully Added"));
+       // conversation.end();
         return "Account Menu";
     }
-    
-     public void handleUserPicUpload(FileUploadEvent event) {
+
+    public void handleUserPicUpload(FileUploadEvent event) {
         UploadedFile uploadedFile = event.getFile();
         try {
             byte[] contents = IOUtils.toByteArray(uploadedFile.getInputstream()); // uploadedFile.getContents() doesn't work as expected
             //byte[] contents = uploadedFile.getContents();
             String type = uploadedFile.getContentType();
             Image image = new Image(contents, type);
-            //String filename = uploadedFile.getFileName();
+            String filename = uploadedFile.getFileName();
             getImagesCollection().add(image);
+            getImages().put(filename, image);
         } catch (IOException ex) {
             Logger.getLogger(UserProfileBean.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public StreamedContent getStreamedImage() {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
+            return new DefaultStreamedContent();
+        } else {
+            String name = context.getExternalContext().getRequestParameterMap().get("id");
+            Image image = getImages().get(name);
+
+            return new DefaultStreamedContent(
+                    new ByteArrayInputStream(image.getContents()), image.getType());
+        }
+    }
+
+
+
+    
+
+    /**
+     * @return the imageIds
+     */
+    public Collection<String> getImageIds() {
+        return getImages().keySet();
     }
 
     /**
@@ -184,7 +237,6 @@ public class AddPropertyBean implements Serializable {
     /**
      * @return the numberOfOthersRooms
      */
-   
     /**
      * @return the numberOfOtherRooms
      */
@@ -283,8 +335,6 @@ public class AddPropertyBean implements Serializable {
         this.postalCode = postalCode;
     }
 
- 
-
     /**
      * @return the imagesArrayIndex
      */
@@ -340,5 +390,19 @@ public class AddPropertyBean implements Serializable {
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
     }
-    
+
+    /**
+     * @param images the images to set
+     */
+    public void setImages(Map<String, Image> images) {
+        this.images = images;
+    }
+
+    /**
+     * @return the images
+     */
+    public Map<String, Image> getImages() {
+        return images;
+    }
+
 }

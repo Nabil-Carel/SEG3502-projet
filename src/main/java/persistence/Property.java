@@ -9,12 +9,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.persistence.CascadeType;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -24,7 +26,7 @@ import javax.persistence.Table;
  * @author nabil
  */
 @Entity
-@Table(name="Property08527089")
+@Table(name="Property08527089_")
 public class Property implements Serializable {
 
     private static long serialVersionUID = 1L;
@@ -39,13 +41,17 @@ public class Property implements Serializable {
     private boolean deletionStatus;
     private String owner;
     private String propertyName;
+    @OneToOne
+    private UserProfile user;
     
     private int numberOfOtherRooms;
    
-    @OneToMany
+    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER, 
+            mappedBy="property")
     private Collection<Image> pictures;
      
-    @OneToOne
+    @OneToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    
     private Address address;
 
     public Property() {
@@ -86,10 +92,7 @@ public class Property implements Serializable {
             return false;
         }
         Property other = (Property) object;
-        if ((this.getId() == null && other.getId() != null) || (this.getId() != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        return !((this.getId() == null && other.getId() != null) || (this.getId() != null && !this.id.equals(other.id)));
     }
 
     @Override
@@ -264,6 +267,20 @@ public class Property implements Serializable {
      */
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
+    }
+
+    /**
+     * @return the user
+     */
+    public UserProfile getUser() {
+        return user;
+    }
+
+    /**
+     * @param user the user to set
+     */
+    public void setUser(UserProfile user) {
+        this.user = user;
     }
     
 }

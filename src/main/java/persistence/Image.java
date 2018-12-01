@@ -23,7 +23,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="Image08527089")
 public class Image implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -32,8 +32,8 @@ public class Image implements Serializable {
     private String type;
     @ManyToOne
     @JoinColumn(name="USER_PICTURES",
-                referencedColumnName="emailId")
-    private UserProfile user;
+                referencedColumnName="owner")
+    private Property property;
     
     public Image(){
      
@@ -55,7 +55,7 @@ public class Image implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (getId() != null ? getId().hashCode() : 0);
         return hash;
     }
 
@@ -71,7 +71,7 @@ public class Image implements Serializable {
 
     @Override
     public String toString() {
-        return "persistence.Image[ id=" + id + " ]";
+        return "persistence.Image[ id=" + getId() + " ]";
     }
 
     /**
@@ -85,7 +85,7 @@ public class Image implements Serializable {
      * @param contents the contents to set
      */
     public void setContents(byte[] contents) {
-        this.contents = contents;
+        this.setContents(contents);
     }
 
     /**
@@ -103,17 +103,36 @@ public class Image implements Serializable {
     }
 
     /**
-     * @return the user
+     * @return the serialVersionUID
      */
-    public UserProfile getUser() {
-        return user;
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
     }
 
     /**
-     * @param user the user to set
+     * @param aSerialVersionUID the serialVersionUID to set
      */
-    public void setUser(UserProfile user) {
-        this.user = user;
+    public static void setSerialVersionUID(long aSerialVersionUID) {
+        serialVersionUID = aSerialVersionUID;
     }
+
+    
+    /**
+     * @return the property
+     */
+    public Property getProperty() {
+        return property;
+    }
+
+    /**
+     * @param property the property to set
+     */
+    public void setProperty(Property property) {
+        this.property = property;
+    }
+
+  
+
+    
     
 }

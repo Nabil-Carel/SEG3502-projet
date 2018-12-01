@@ -95,7 +95,6 @@ public class SignInBean implements Serializable {
         //userProfileBean.setUser(userProfileBean.findUser(emailId) );
         setUser(getUserProfileBean().findUser(getEmailId()));
         userProfileBean.setUser(user);
-
         String accountInfo = null;
 
         if (getEmailId() != null && getUser().getEmailId().equals(getEmailId()) && getInputPassword() != null && getUser().getPassword().equals(getInputPassword())) {
@@ -103,13 +102,12 @@ public class SignInBean implements Serializable {
             message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Welcome", getUser().getFirstName());
             //userProfileBean.initialiseUserVariables();
             accountInfo = accountMenu();
-            setImagesArray(getUser().getPictures().toArray(new Image[0]));
+//            setImagesArray(getUser().getPictures().toArray(new Image[0]));
            
-            imagesIds = new ArrayList();
-           for(int i = 0; i< imagesArray.length;i++){
+//           for(int i = 0; i< imagesArray.length;i++){
                //
-               imagesIds.add(imagesArray[i].getId().toString());
-          }
+             //  imagesIds.add(imagesArray[i].getId().toString());
+         // }
           // System.out.println(user);
           // System.out.println(imagesList.size());
           // System.out.println("accountInfo "+accountInfo);
@@ -126,21 +124,21 @@ public class SignInBean implements Serializable {
         return accountInfo;
     }
     
-    public StreamedContent getStreamedImage() {
+   /* public StreamedContent getStreamedImage() {
         FacesContext context = FacesContext.getCurrentInstance();
-        System.out.println("wrong way");
+        //System.out.println("wrong way");
         if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
             return new DefaultStreamedContent();
         } else {
-            System.out.println("god of war");
+            //System.out.println("god of war");
             String name = context.getExternalContext().getRequestParameterMap().get("id");
-            Image image = userProfileBean.getEm().find(Image.class,Long.parseLong(name));
-            System.out.println(image);
+           // Image image = userProfileBean.getEm().find(Image.class,Long.parseLong(name));
+            //System.out.println(image);
 
             return new DefaultStreamedContent(
                     new ByteArrayInputStream(image.getContents()), image.getType());
         }
-    }
+    }*/
 
   
 
@@ -182,8 +180,8 @@ public class SignInBean implements Serializable {
     /**
      * @param user the user to set
      */
-    public static void setUser(UserProfile user) {
-        SignInBean.user = user;
+    public void setUser(UserProfile user) {
+        this.user = user;
     }
 
     /**
