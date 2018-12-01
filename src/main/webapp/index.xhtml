@@ -77,7 +77,7 @@
                             </p:calendar>
                             <p:message for="dob"/>
                         </h:panelGrid>
-                        <p:commandButton id="backToMenu" action="#{userProfileBean.backToMenu()}" value="Back" />
+                        <p:commandButton id="backToMenu" action="#{userProfileBean.backToMenu()}" value="Back" immediate="true" />
                     </p:panel>
                 </p:tab>
                 <p:tab id="address" title="Address">
@@ -135,9 +135,7 @@
                                              autoResize="true" 
                                              title="Provide some information about yourself"/>
                             <h:outputText id="counter" value="" /> 
-                            <p:commandButton value="Add Pictures" onclick="PF('picturesDialog').show();"
-                                             type="button"
-                                             title="Click to upload some pictures"/>
+                           
                         </h:panelGrid>
                     </p:panel>
                 </p:tab>
