@@ -26,6 +26,11 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
 import javax.inject.Inject;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
 import org.apache.commons.io.IOUtils;
 import org.primefaces.event.FileUploadEvent;
 
@@ -63,12 +68,13 @@ public class AddPropertyBean implements Serializable {
     private String province;
     private String postalCode;
     private Collection<Image> imagesCollection;
-    private int imagesArrayIndex = 0;
+    private int index;
     @Inject
     private UserProfileBean userProfileBean;
     private Map<String, Image> images;
     @Inject
     private Conversation conversation;
+
     /**
      * Creates a new instance of AddPropertyBean
      */
@@ -76,10 +82,10 @@ public class AddPropertyBean implements Serializable {
         imagesCollection = new ArrayList<>(5);
         images = new HashMap<>();
     }
-    
+
     @PostConstruct
     public void init() {
-       // conversation.begin();
+        // conversation.begin();
     }
 
     public String addProperty() {
@@ -87,12 +93,81 @@ public class AddPropertyBean implements Serializable {
         //System.out.println("address   "+address.getId());
         Property property = new Property(getNumberOfBedrooms(), getNumberOfBathrooms(), getRent(), getPropertyName(), address);
 
-        property.setPictures(getImagesCollection());
+        getImages().values().stream().map((p) -> new persistence.Image(p.getContents(), p.getType())).map((pim) -> {
+            pim.setProperty(property);
+            return pim;
+        }).forEachOrdered((pim) -> {
+            property.addPicture(pim);
+        });
         property.setOwner(getUserProfileBean().getUser().getEmailId());
         getUserProfileBean().persist(property);
+        images.clear();
+        imagesCollection.clear();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Property Successfully Added"));
-       // conversation.end();
-        return "Account Menu";
+        // conversation.end();
+        return "Account Menu?faces-redirect=true";
+    }
+
+    /*public String addPropertyWithOlderPictures() {
+        Address address = new Address(getNumber(), getStreet(), getUnit(), getCity(), getProvince(), getPostalCode());
+        //System.out.println("address   "+address.getId());
+        Property property = new Property(getNumberOfBedrooms(), getNumberOfBathrooms(), getRent(), getPropertyName(), address);
+        userProfileBean.setProperty(userProfileBean.getProperties().get(index));
+        //property.setPictures(userProfileBean.getProperty().getPictures());
+        ArrayList<Image> list = new ArrayList<>();
+        list.addAll(userProfileBean.getProperty().getPictures());
+        for (int i = 0; i < list.size(); i++) {
+            property.addPicture(list.get(i));
+        }
+        property.setOwner(getUserProfileBean().getUser().getEmailId());
+        System.out.println("property----- " + userProfileBean.getProperty());
+        try {
+            userProfileBean.getUt().begin();
+            System.out.println(userProfileBean.getUt() == null);
+             Property actorToBeRemoved = userProfileBean.getEm().getReference(Property.class, userProfileBean.getProperty().getId());
+            userProfileBean.getEm().remove(actorToBeRemoved);
+            userProfileBean.getUt().commit();
+        } catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException ex) {
+            System.out.println("exception---");
+            Logger.getLogger(AddPropertyBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
+        }
+        getUserProfileBean().persist(property);
+        images.clear();
+        imagesCollection.clear();
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Property Successfully Added"));
+        // conversation.end();
+        return "Account Menu?faces-redirect=true";
+    }*/
+
+    public String updatePropertyWithNewPictures() {
+        Address address = new Address(getNumber(), getStreet(), getUnit(), getCity(), getProvince(), getPostalCode());
+        //System.out.println("address   "+address.getId());
+        Property property = new Property(getNumberOfBedrooms(), getNumberOfBathrooms(), getRent(), getPropertyName(), address);
+        userProfileBean.setProperty(userProfileBean.getProperties().get(index));
+        getImages().values().stream().map((p) -> new persistence.Image(p.getContents(), p.getType())).map((pim) -> {
+            pim.setProperty(property);
+            return pim;
+        }).forEachOrdered((pim) -> {
+            property.addPicture(pim);
+        });
+        property.setOwner(getUserProfileBean().getUser().getEmailId());
+        try {
+            userProfileBean.getUt().begin();
+            Property actorToBeRemoved = userProfileBean.getEm().getReference(Property.class, userProfileBean.getProperty().getId());
+            userProfileBean.getEm().remove(actorToBeRemoved);
+            
+            userProfileBean.getUt().commit();
+        } catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException ex) {
+            Logger.getLogger(AddPropertyBean.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
+        }
+        getUserProfileBean().persist(property);
+        images.clear();
+        imagesCollection.clear();
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Property Successfully Added"));
+        // conversation.end();
+        return "Account Menu?faces-redirect=true";
     }
 
     public void handleUserPicUpload(FileUploadEvent event) {
@@ -123,10 +198,6 @@ public class AddPropertyBean implements Serializable {
                     new ByteArrayInputStream(image.getContents()), image.getType());
         }
     }
-
-
-
-    
 
     /**
      * @return the imageIds
@@ -335,20 +406,6 @@ public class AddPropertyBean implements Serializable {
     }
 
     /**
-     * @return the imagesArrayIndex
-     */
-    public int getImagesArrayIndex() {
-        return imagesArrayIndex;
-    }
-
-    /**
-     * @param imagesArrayIndex the imagesArrayIndex to set
-     */
-    public void setImagesArrayIndex(int imagesArrayIndex) {
-        this.imagesArrayIndex = imagesArrayIndex;
-    }
-
-    /**
      * @return the userProfileBean
      */
     public UserProfileBean getUserProfileBean() {
@@ -402,6 +459,10 @@ public class AddPropertyBean implements Serializable {
      */
     public Map<String, Image> getImages() {
         return images;
+    }
+
+    public void setIndex(String index) {
+        this.index = Integer.parseInt(index);
     }
 
 }

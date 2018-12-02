@@ -9,6 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import java.util.Date;
@@ -22,10 +23,8 @@ import javax.enterprise.context.ApplicationScoped;
 
 import javax.faces.application.FacesMessage;
 
-
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
-
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,6 +36,9 @@ import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
+import static javax.ws.rs.client.Entity.entity;
+import static org.eclipse.persistence.sessions.SessionProfiler.Transaction;
 
 import org.primefaces.PrimeFaces;
 
@@ -59,13 +61,12 @@ import persistence.Property;
 
 public class UserProfileBean implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static long serialVersionUID = 1L;
 
-   
     /**
      * Internal class to represent images prior to persisting
      */
- /*   class Image {
+    /*   class Image {
 
         byte[] contents;
         String type;
@@ -83,7 +84,6 @@ public class UserProfileBean implements Serializable {
             return type;
         }
     }*/
-
     private String emailId;
     private String password;
     private String firstName;
@@ -101,30 +101,33 @@ public class UserProfileBean implements Serializable {
 
     private UserProfile user;
     private String name;
+
     @PersistenceContext(unitName = "LAB4_PU")
     private EntityManager em;
     @Resource
     private javax.transaction.UserTransaction utx;
-   // private Map<String, Image> images;
+    // private Map<String, Image> images;
 
     private boolean emailAlreadyInDB;
     private ArrayList<Property> properties;
     private ArrayList<String> propertiesIds;
     private Property property;
     private Collection<Image> imagesCollection;
-    private Image[] imagesArray;
+    private ArrayList<Image> imagesList;
     private ArrayList<String> imagesIds;
+    @Resource
+    private UserTransaction ut;
 
-   // private Collection<Image> imagesCollection;
-   // private ArrayList<StreamedContent> imagesList;
-   // private Image[] imagesArray;
-   // private StreamedContent streamedImg;
-
-   // private byte[] imageContent;
+    // private Collection<Image> imagesCollection;
+    // private ArrayList<StreamedContent> imagesList;
+    // private Image[] imagesArray;
+    // private StreamedContent streamedImg;
+    // private byte[] imageContent;
     //private String imageType;
-    
     @Inject
     private SignInBean signInBean;
+    @Inject
+    private AddPropertyBean addPropertyBean;
 
     /**
      * Creates a new instance of UserProfileBean
@@ -132,6 +135,7 @@ public class UserProfileBean implements Serializable {
     public UserProfileBean() {
         //images = new TreeMap<>();
         imagesIds = new ArrayList<>();
+        imagesList = new ArrayList<>();
     }
 
     /**
@@ -329,49 +333,95 @@ public class UserProfileBean implements Serializable {
             Logger.getLogger(UserProfileBean.class.getName()).log(Level.SEVERE, null, ex);
         }
     }*/
-    
-    
-
     public StreamedContent getStreamedImage() {
         FacesContext context = FacesContext.getCurrentInstance();
-       System.out.println("context");
+        System.out.println("context");
         if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
             return new DefaultStreamedContent();
         } else {
-           
+
             String id = context.getExternalContext().getRequestParameterMap().get("id");
-            System.out.println("id  -- "+id);
-            Image image = getEm().find(Image.class,Long.parseLong(id));
+            System.out.println("id  -- " + id);
+            Image image = getEm().find(Image.class, Long.parseLong(id));
             //System.out.println(image);
 
             return new DefaultStreamedContent(
                     new ByteArrayInputStream(image.getContents()), image.getType());
         }
     }
-    
+
     public String viewProperty(String index) {
        
-       
+        imagesList.clear();
+        getImagesIds().clear();
         setProperty(getProperties().get(Integer.parseInt(index)));
-         setImagesCollection(getProperty().getPictures());
-         imagesArray = getImagesCollection().toArray(new Image[0]);
-         imagesIds.clear();
-        for(int i =0; i < getImagesArray().length;i++) {
-            imagesIds.add(getImagesArray()[i].getId().toString());
-            System.out.println("forloop "+getImagesArray()[i].getId().toString());
-        }
-       // System.out.println("imagesAray "+imagesArray);
         
-        return "viewProperty";
+        setImagesCollection(getProperty().getPictures());
+
+        //System.out.println("index "+getProperty().getPictures());
+        //  
+        getImagesList().addAll(getImagesCollection());
+        
+        for (int i = 0; i<getImagesList().size(); i++) {
+            getImagesIds().add(getImagesList().get(i).getId().toString());
+            System.out.println("imagesId    "+imagesIds);
+            //System.out.println("forloop " + getImagesArray()[i].getId().toString());
+        }
+       // System.out.println("imagesAray " + Arrays.toString(getImagesArray()));
+
+        return "viewProperty?faces-redirect=true";
     }
+
+    public String loadProperties() {
+        setProperties(findProperty(getEm(), getUser().getEmailId()));
+        setPropertiesIds(new ArrayList<>());
+
+        return "viewProperties?faces-redirect=true";
+    }
+
+    public String deleteProperty(String index) throws NotSupportedException {
+        int i = Integer.parseInt(index);
+        setProperty(getProperties().get(i));
+        try {
+            getUt().begin();
+            Property actorToBeRemoved = em.getReference(Property.class, property.getId());
+            em.remove(actorToBeRemoved);
+            //getEm().remove(getEm().merge(getProperty()));
+            // imagesIds.remove(i);
+            getUt().commit();
+            setProperties(findProperty(getEm(), getUser().getEmailId()));
+            setPropertiesIds(new ArrayList<>());
+        } catch (SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException ex) {
+            Logger.getLogger(UserProfileBean.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("exception");
+            throw new RuntimeException(ex);
+        }
+
+        return "viewProperties?faces-redirect=true";
+    }
+    
+    /*public String loadUpdateMenu(String row){
+       
+        return "updatePropertyMenu?faces-redirect=true";
+    }
+    
+    public String updatePropertyWithOldPicutres(){
+        return "updateWithOldPictures?faces-redirect=true";
+    }*/
+    
+    public String updatePropertyWithNewPictures(String row){
+         addPropertyBean.setIndex(row);
+        return "updatePropertyWithNewPictures?faces-redirect=true";
+    }
+    
+    
 
     /**
      * @return the imageIds
      */
-   // public Collection<String> getImageIds() {
-   //     return getImages().keySet();
-   // }
-
+    // public Collection<String> getImageIds() {
+    //     return getImages().keySet();
+    // }
     /**
      * Add the user to the database
      *
@@ -381,39 +431,38 @@ public class UserProfileBean implements Serializable {
     public String doRegister() throws IOException {
         Address address = new Address(getNumber(), getStreet(), getUnit(), getCity(), getProvince(), getPostalCode());
         UserProfile profile = new UserProfile(getEmailId(), getPassword(), getFirstName(), getLastName(), getPhone(), getDob(), address, getBio());
-       // getImages().values().stream().map((p) -> new persistence.Image(p.getContents(), p.getType())).map((pim) -> {
-       //     pim.setUser(profile);
-         //   return pim;
-       // }).forEachOrdered((pim) -> {
+        // getImages().values().stream().map((p) -> new persistence.Image(p.getContents(), p.getType())).map((pim) -> {
+        //     pim.setUser(profile);
+        //   return pim;
+        // }).forEachOrdered((pim) -> {
         //    profile.addPicture(pim);
-       // });
+        // });
         String userAccountMenu = null;
         try {
             persist(profile);
             setUser(profile);
-            signInBean.setUser(user);
-            signInBean.setInputPassword(password);
-            signInBean.setEmailId(emailId);
-            
+            getSignInBean().setUser(getUser());
+            getSignInBean().setInputPassword(getPassword());
+            getSignInBean().setEmailId(getEmailId());
+
             String msg = "User Profile Created Successfully";
-            userAccountMenu = "Account Menu";
+            userAccountMenu = "Account Menu?faces-redirect=true";
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", msg));
             FacesContext.getCurrentInstance().getExternalContext()
                     .getFlash().setKeepMessages(true);
             FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
             FacesContext.getCurrentInstance().getViewRoot().getViewMap().clear();
-            
-            // SignInBean.initialiseUserVariables();
 
+            // SignInBean.initialiseUserVariables();
             SignInBean.welcomeMsg();
         } catch (RuntimeException e) {
-            if(userAccountMenu == null) {
+            if (userAccountMenu == null) {
                 String msg = "Error While Creating User Profile";
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", msg));
-            FacesContext.getCurrentInstance().getExternalContext()
-                    .getFlash().setKeepMessages(true);
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", msg));
+                FacesContext.getCurrentInstance().getExternalContext()
+                        .getFlash().setKeepMessages(true);
             }
-            
+
         }
         return userAccountMenu;
     }
@@ -428,15 +477,7 @@ public class UserProfileBean implements Serializable {
             throw new RuntimeException(e);
         }
     }
-    
-    public String loadProperties(){
-        setProperties(findProperty(getEm(), getUser().getEmailId()));
-        setPropertiesIds(new ArrayList<>());
-       
-        return "viewProperties";
-    }
 
-  
     public UserProfile findUser(String emailId) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         //UserProfile user = getEm().find(UserProfile.class, emailId);
@@ -453,16 +494,15 @@ public class UserProfileBean implements Serializable {
         query.setParameter("userEmail", email);
         return performQuery(query);
     }
-    
-    
+
     @SuppressWarnings("unchecked")
-     public ArrayList<Property> findProperty(EntityManager em, String email) {
+    public ArrayList<Property> findProperty(EntityManager em, String email) {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         Query query = em.createQuery(
                 "SELECT prop FROM Property prop"
                 + " WHERE prop.owner = :owner");
         query.setParameter("owner", email);
-         List resultList = query.getResultList();
+        List resultList = query.getResultList();
         if (resultList.isEmpty()) {
             return null;
         }
@@ -509,9 +549,9 @@ public class UserProfileBean implements Serializable {
         if (isEmailAlreadyInDB()) {
             setEmailAlreadyInDB(false);   //reset in case user goes back
             FacesMessage msg;
-            msg = new FacesMessage(FacesMessage.SEVERITY_WARN,"Email already used!","");
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Email already used!", "");
             FacesContext.getCurrentInstance().addMessage(null, msg);
-             
+
             //return "confirm";
             return event.getOldStep();
         } else {
@@ -523,7 +563,6 @@ public class UserProfileBean implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Welcome " + getUser().getFirstName()));
     }
 
-    //throws InterruptedException
     public String login() throws IOException {
         FacesMessage message = null;
         boolean loggedIn = false;
@@ -540,20 +579,22 @@ public class UserProfileBean implements Serializable {
             loggedIn = true;
             message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Welcome", getUser().getFirstName());
             //userProfileBean.initialiseUserVariables();
-            accountInfo = "Account Menu";
-            
+            accountInfo = "Account Menu?faces-redirect=true";
+
         } else {
             loggedIn = false;
-            message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error", "Invalid email or password!");
-            accountInfo = "signIn";
+            if(emailId != null) {
+                 message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error", "Invalid email or password!");
+                 System.out.println("emailId "+emailId);
+            }
+           
+            accountInfo = "signIn?faces-redirect=true";
         }
 
         FacesContext.getCurrentInstance().addMessage(null, message);
         PrimeFaces.current().ajax().addCallbackParam("loggedIn", loggedIn);
         return accountInfo;
     }
-    
-   
 
     /**
      * ************************setters and getters
@@ -594,9 +635,8 @@ public class UserProfileBean implements Serializable {
      * @return the images
      */
 //    public Map<String, Image> getImages() {
-     //   return images;
-   // }
-
+    //   return images;
+    // }
     /**
      * @return the searchImageIds
      */
@@ -608,9 +648,8 @@ public class UserProfileBean implements Serializable {
      * @param images the images to set
      */
 //    public void setImages(Map<String, Image> images) {
-     //   this.images = images;
-   // }
-
+    //   this.images = images;
+    // }
     /**
      * @return the user
      */
@@ -667,9 +706,6 @@ public class UserProfileBean implements Serializable {
         this.inputPassword = inputPassword;
     }
 
-   
-
-   
     /**
      * @return the searchImageIds
      */
@@ -682,15 +718,15 @@ public class UserProfileBean implements Serializable {
     }
 
     public String createAccount() {
-        return "index";
+        return "index?faces-redirect=true";
     }
 
     public String logout() {
         //FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Not implemented yet!"));
         setUser(null);
-        
+
         setEmailAlreadyInDB(false);
-        return "signIn";
+        return "signIn?faces-redirect=true";
     }
 
     /**
@@ -720,8 +756,6 @@ public class UserProfileBean implements Serializable {
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
-
- 
 
     /**
      * @return the properties
@@ -772,19 +806,7 @@ public class UserProfileBean implements Serializable {
         this.imagesCollection = imagesCollection;
     }
 
-    /**
-     * @return the imagesArray
-     */
-    public Image[] getImagesArray() {
-        return imagesArray;
-    }
-
-    /**
-     * @param imagesArray the imagesArray to set
-     */
-    public void setImagesArray(Image[] imagesArray) {
-        this.imagesArray = imagesArray;
-    }
+    
 
     /**
      * @return the imagesIds
@@ -799,8 +821,63 @@ public class UserProfileBean implements Serializable {
     public void setImagesIds(ArrayList<String> imagesIds) {
         this.imagesIds = imagesIds;
     }
+
+    public String backToMenu() {
+        return "menu?faces-redirect=true";
+    }
+
+    /**
+     * @param aSerialVersionUID the serialVersionUID to set
+     */
+    public static void setSerialVersionUID(long aSerialVersionUID) {
+        serialVersionUID = aSerialVersionUID;
+    }
+
+   
+
+    /**
+     * @return the ut
+     */
+    public UserTransaction getUt() {
+        return ut;
+    }
+
+    /**
+     * @param ut the ut to set
+     */
+    public void setUt(UserTransaction ut) {
+        this.ut = ut;
+    }
+
+    /**
+     * @return the imagesList
+     */
+    public ArrayList<Image> getImagesList() {
+        return imagesList;
+    }
+
+    /**
+     * @param imagesList the imagesList to set
+     */
+    public void setImagesList(ArrayList<Image> imagesList) {
+        this.imagesList = imagesList;
+    }
     
-    public String backToMenu(){
+    public String deleteAccount() {
+        try {
+            getUt().begin();
+            UserProfile actorToBeRemoved = em.getReference(UserProfile.class, user.getEmailId());
+            em.remove(actorToBeRemoved);
+            //getEm().remove(getEm().merge(getProperty()));
+            // imagesIds.remove(i);
+            getUt().commit();
+            setProperties(findProperty(getEm(), getUser().getEmailId()));
+            setPropertiesIds(new ArrayList<>());
+        } catch (NotSupportedException|SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException ex) {
+            Logger.getLogger(UserProfileBean.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("exception");
+            throw new RuntimeException(ex);
+        } 
         return "menu";
     }
 

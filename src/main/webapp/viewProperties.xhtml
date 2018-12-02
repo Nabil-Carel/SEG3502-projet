@@ -17,13 +17,16 @@
 
                 <p:dataTable  value="#{userProfileBean.getProperties()}" var="obj" rowIndexVar="row">
                     <p:column headerText="Property Name">
-                        <h:commandLink  style="margin-right:20px;"
+                        <p:commandLink  style="margin-right:20px;"
                                         title="Click to view property" action="#{userProfileBean.viewProperty(row)}">
                             <h:outputText value="#{obj.getPropertyName()}" />
-                        </h:commandLink>
+                        </p:commandLink>
                     </p:column>
                     <p:column headerText="Update Property">
-                        <p:button value="Update Property"/>
+                        <p:commandButton value="Update Property" action="#{userProfileBean.updatePropertyWithNewPictures(row)}"/>
+                    </p:column>
+                    <p:column headerText="Delete Property">
+                        <p:commandButton value="Delete Property" action="#{userProfileBean.deleteProperty(row)}"/>
                     </p:column>
 
 
@@ -32,7 +35,7 @@
 
 
 
-                <p:commandButton id="backToMenu" action="#{accountMenuBean.backToMenu()}" value="Back" />
+                <h:commandLink id="backToMenu" action="#{accountMenuBean.backToMenu()}" value="Back" />
             </h:form>
             
         </p:panel>

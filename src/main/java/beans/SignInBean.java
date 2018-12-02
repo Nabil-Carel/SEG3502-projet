@@ -66,11 +66,11 @@ public class SignInBean implements Serializable {
 
    
     public String viewAccount() {
-        return "viewAccount";
+        return "viewAccount?faces-redirect=true";
     }
 
     public String accountMenu() {
-        return "Account Menu";
+        return "Account Menu?faces-redirect=true";
     }
 
     /*public boolean checkPassword(){

@@ -77,7 +77,7 @@
                             </p:calendar>
                             <p:message for="dob"/>
                         </h:panelGrid>
-                        <p:commandButton id="backToMenu" action="#{userProfileBean.backToMenu()}" value="Back" immediate="true" />
+                        <h:commandLink id="backToMenu" onclick="history.go(-1)" value="Back" immediate="true" />
                     </p:panel>
                 </p:tab>
                 <p:tab id="address" title="Address">
