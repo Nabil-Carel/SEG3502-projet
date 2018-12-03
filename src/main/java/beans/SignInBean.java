@@ -5,6 +5,7 @@
  */
 package beans;
 
+
 import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;

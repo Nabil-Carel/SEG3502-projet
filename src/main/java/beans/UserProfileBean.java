@@ -62,7 +62,7 @@ import persistence.Property;
 
 public class UserProfileBean implements Serializable {
 
-    private static long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Internal class to represent images prior to persisting
@@ -107,7 +107,11 @@ public class UserProfileBean implements Serializable {
     private EntityManager em;
     @Resource
     private javax.transaction.UserTransaction utx;
-    // private Map<String, Image> images;
+
+   // private Map<String, Image> images;
+    
+    private ArrayList<Property> visitedProperties;
+
 
     private boolean emailAlreadyInDB;
     private ArrayList<Property> properties;
@@ -137,8 +141,12 @@ public class UserProfileBean implements Serializable {
     public UserProfileBean() {
         //images = new TreeMap<>();
         imagesIds = new ArrayList<>();
+
+        visitedProperties = new ArrayList<>();
+
         imagesList = new ArrayList<>();
         signedIn = false;
+
     }
 
     /**
@@ -338,6 +346,16 @@ public class UserProfileBean implements Serializable {
     }*/
     public StreamedContent getStreamedImage() {
         FacesContext context = FacesContext.getCurrentInstance();
+
+       System.out.println("context");
+        if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
+            return new DefaultStreamedContent();
+        } else {
+           
+            String id = context.getExternalContext().getRequestParameterMap().get("id");
+            System.out.println("id  -- "+id);
+            Image image = getEm().find(Image.class,Long.parseLong(id));
+
         System.out.println("context");
         if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
             return new DefaultStreamedContent();
@@ -346,6 +364,7 @@ public class UserProfileBean implements Serializable {
             String id = context.getExternalContext().getRequestParameterMap().get("id");
             System.out.println("id  -- " + id);
             Image image = getEm().find(Image.class, Long.parseLong(id));
+
             //System.out.println(image);
 
             return new DefaultStreamedContent(
@@ -441,9 +460,13 @@ public class UserProfileBean implements Serializable {
         try {
             persist(profile);
             setUser(profile);
+
+            
+
             getSignInBean().setUser(getUser());
             getSignInBean().setInputPassword(getPassword());
             getSignInBean().setEmailId(getEmailId());
+
 
             String msg = "User Profile Created Successfully";
             userAccountMenu = "Account Menu?faces-redirect=true";
@@ -549,9 +572,12 @@ public class UserProfileBean implements Serializable {
         if (isEmailAlreadyInDB()) {
             setEmailAlreadyInDB(false);   //reset in case user goes back
             FacesMessage msg;
-            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Email already used!", "");
-            FacesContext.getCurrentInstance().addMessage(null, msg);
 
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN,"Email already used!","");
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+             
+
+       
             //return "confirm";
             return event.getOldStep();
         } else {
@@ -585,9 +611,11 @@ public class UserProfileBean implements Serializable {
         } else {
             loggedIn = false;
 
+
             message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error", "Invalid email or password!");
 
             accountInfo = "signIn?faces-redirect=true";
+
         }
 
         FacesContext.getCurrentInstance().addMessage(null, message);
@@ -891,6 +919,18 @@ public class UserProfileBean implements Serializable {
      */
     public void setSignedIn(boolean signedIn) {
         this.signedIn = signedIn;
+    }
+    
+    public String backToMenu(){
+        return "menu";
+    }
+    
+    public ArrayList<Property> getVisitedProperties() {
+        return visitedProperties;
+    }
+
+    public void setVisitedProperties(ArrayList<Property> visitedProperties) {
+        this.visitedProperties = visitedProperties;
     }
 
 }

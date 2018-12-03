@@ -22,8 +22,10 @@ import javax.inject.Inject;
 public class AccountMenuBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Inject
     private AddPropertyBean addPropertyBean;
+
 
     /**
      * Creates a new instance of AccountMenuBean
@@ -31,21 +33,15 @@ public class AccountMenuBean implements Serializable {
     public AccountMenuBean() {
         
     }
-    
-    
-    public String viewVisitHistory() {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Not implemented yet!"));
-        return null;
-    }
 
     public String viewVisitingList() {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Not implemented yet!"));
-        return null;
+        return "viewVisitedProperties";
     }
 
     public String viewAccount() {
         //implemented in signInBean
         return null;
+
 
     }
     
@@ -57,18 +53,11 @@ public class AccountMenuBean implements Serializable {
     public String viewProperties() {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Not implemented yet!"));
         return null;
+
     }
 
     public String searchProperty() {
-       FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Not implemented yet!"));
-        return null;
-    }
-
-    
-
-    public String browsePropertiesByLocation() {
-       FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Not implemented yet!"));
-        return null;
+       return "searchProperty";
     }
 
     public String addProperty() {

@@ -24,9 +24,6 @@
                             <p:commandButton id="logout" action="#{userProfileBean.logout()}" value="Logout" />    
                             <p:commandButton id="updateAccount" action="#{accountMenuBean.updateAccount()}" value="UpdateAccount" />   
                         </h:panelGrid>
-
-
-
                     </p:panel>
 
 
@@ -36,23 +33,17 @@
                         <h:panelGrid columns="1">
                             <p:commandButton id="addProperty" action="#{accountMenuBean.addProperty()}" value="Add Property" /> 
                             <p:commandButton id="searchProperty" action="#{accountMenuBean.searchProperty()}" value="Search Property" />
-                            <p:commandButton id="browsePropertiesByLocation" action="#{accountMenuBean.browsePropertiesByLocation()}" value="Browse properties by location" />
                             <p:commandButton id="viewVisitingList" action="#{accountMenuBean.viewVisitingList()}" value="View Visiting List" />
-                            <p:commandButton id="viewProperties" action="#{userProfileBean.loadProperties()}" value="View Properties" />
-                            <p:commandButton id="viewVisitHistory" action="#{accountMenuBean.viewVisitHistory()}" value="View Visiting History" />
+                            <p:commandButton id="viewProperties" action="#{userProfileBean.loadProperties()}" value="View My Properties" />
                         </h:panelGrid>
                     </p:panel>
 
+                    <p:commandButton id="backToMenu" action="#{accountMenuBean.backToMenu()}" value="Back to Menu" />
 
                 </p:tab>
 
             </p:panel >
         </h:form>
-
-
-
-
-
 
     </h:body>
 </html>

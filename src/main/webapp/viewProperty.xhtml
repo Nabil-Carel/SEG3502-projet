@@ -42,10 +42,11 @@
                     <h:outputText style="font-weight:bold" value="Postal Code:"/>
                     <h:outputText value="#{userProfileBean.property.address.postalCode}" />
                 </h:panelGrid>
-               
+
 
                     
                     <p:galleria  panelWidth="500" value="#{userProfileBean.getImagesIds()}" var="imageId" showCaption="true">
+
                         <p:graphicImage value="#{userProfileBean.getStreamedImage()}" width="500" >
                             <f:param name="id" value="#{imageId}" />
                         </p:graphicImage>
@@ -58,13 +59,7 @@
                                  value="Back"
                                  />
             </p:panel>
-
         </h:form>
-
-
-
-
-
 
     </h:body>
 </html>
