@@ -1,0 +1,186 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <h:form id="form1">
+            <p:tooltip showEvent="focus" hideEvent="blur"  />
+            <p:growl autoUpdate="true"/>
+            <p:wizard >
+                <p:tab id="userdetails" title="Personal">
+                    <p:panel header="Personal Details">
+                        <p:messages />
+                        <h:panelGrid columns="3">
+                            <p:outputLabel value="Number of Bedrooms:*"/>
+                            <p:inputText id="numberOfBedrooms"
+                                         value="#{addPropertyBean.numberOfBedrooms}"
+                                         required="true"
+                                         requiredMessage="You must enter a number of bedrooms"
+                                         />
+
+
+
+                            <p:message  for="numberOfBedrooms"/>
+                            <p:outputLabel value="Number of Bathrooms:*"/>
+                            <p:inputText id="numberOfBathrooms"
+                                         value="#{addPropertyBean.numberOfBathrooms}"
+                                         required="true"
+                                         requiredMessage="You must enter a number of bathrooms"/>
+                            <p:message for="numberOfBedrooms"/>
+
+
+                            <p:outputLabel value="Number of Others Rooms:*"/>
+                            <p:inputText id="numberOfOtherRooms"
+                                         value="#{addPropertyBean.numberOfOtherRooms}"
+                                         required="true" 
+                                         requiredMessage="You must enter a number of bathrooms"/>
+
+                            <p:message  for="numberOfOtherRooms"/>
+
+                            <p:outputLabel value="Property Name:*"/>
+                            <p:inputText id="propertyName"
+                                         value="#{addPropertyBean.propertyName}"
+                                         required="true" 
+                                         requiredMessage="You must enter a name"/>
+
+                            <p:message  for="propertyName"/>
+                            <p:outputLabel value="Rent:*"/>
+                            <p:inputText id="rent"
+                                         required="true"
+                                         requiredMessage="You must enter a rent"
+                                         value="#{addPropertyBean.rent}">
+                                <p:message for="rent"/>
+                            </p:inputText>
+
+                        </h:panelGrid>
+                    </p:panel>
+                </p:tab>
+                <p:tab id="address" title="Address">
+                    <p:panel header="Property Address">
+                        <p:messages />
+                        <h:panelGrid columns="3">
+                            <p:outputLabel value="Number:*"/>
+                            <p:inputText id="number"
+                                         value="#{addPropertyBean.number}"
+                                         label="Number" 
+                                         required="true"
+                                         requiredMessage="A Street Number is required"/>
+                            <p:message for="number"/>
+                            <p:outputLabel value="Street:*"/>
+                            <p:inputText id="street"
+                                         value="#{addPropertyBean.street}"
+                                         label="Street" 
+                                         required="true"
+                                         requiredMessage="A Street Name is required"/>
+                            <p:message for="street"/>
+                            <p:outputLabel value="Unit:"/>
+                            <p:inputText id="unit"
+                                         value="#{addPropertyBean.unit}"
+                                         label="Unit" />
+                            <p:message for="unit"/>
+                            <p:outputLabel value="City:*"/>
+                            <p:inputText id="city"
+                                         value="#{addPropertyBean.city}"
+                                         label="City" 
+                                         required="true"
+                                         requiredMessage="A City Name is required"/>
+                            <p:message for="city"/>
+                            <p:outputLabel value="Province:"/>
+                            <p:inputText id="province"
+                                         value="#{addPropertyBean.province}"
+                                         label="Province" />
+                            <p:message for="province"/>
+                            <p:outputLabel value="Postal Code:"/>
+                            <p:inputText id="pcode"
+                                         value="#{addPropertyBean.postalCode}"
+                                         label="Postal Code" />
+                            <p:message for="pcode"/>
+
+                        </h:panelGrid>
+
+
+                    </p:panel>
+                    <p:panel header="Pictures">
+                        <p:commandButton value="Add Pictures" onclick="PF('picturesDialog').show();"
+                                         type="button"
+                                         title="Click to upload some pictures"/>
+
+                        <p:blockUI block="form1"  widgetVar="bui">
+                            Processing<br />
+                            <p:graphicImage width="100pt" value="/resources/images/ajax_loader.gif"/>
+                        </p:blockUI>
+                        <p:dialog id="pictDialog" header="Upload Pictures" 
+                                  widgetVar="picturesDialog"  position="right">
+                            <h:form enctype="multipart/form-data">
+                                <p:fileUpload
+                                    multiple="true"
+                                    auto="false"
+                                    fileUploadListener="#{addPropertyBean.handleUserPicUpload}"
+                                    mode="advanced" 
+                                    dragDropSupport="true" 
+                                    allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+                                    invalidFileMessage="Only gif, jpg or png type images are allowed"
+                                    sizeLimit="1048576"
+                                    oncomplete="PF('picturesDialog').hide()"
+                                    invalidSizeMessage="File size should not exceed 1MB"/>    
+                            </h:form>
+
+                        </p:dialog>
+
+                    </p:panel>
+
+                </p:tab>
+                <p:tab title="Confirmation">
+                    <p:panel id="Confirmation" header="Please check and confirm your information">
+                        <p:messages />
+                        <h:panelGrid  columns="4">
+                            <h:outputText style="font-weight:bold" value="Number Of Bedrooms: " />
+                            <h:outputText value="#{addPropertyBean.numberOfBedrooms}" />
+                            <h:outputText style="font-weight:bold" value="Number Of Bathrooms: " />
+                            <h:outputText value="#{addPropertyBean.numberOfBathrooms}"/>
+                            <h:outputText style="font-weight:bold" value="Number Of Other Rooms: " />
+                            <h:outputText value="#{addPropertyBean.numberOfOtherRooms}"/>
+                            <h:outputText style="font-weight:bold" value="Property Name: " />
+                            <h:outputText value="#{addPropertyBean.propertyName}"/>
+                            <h:outputText style="font-weight:bold" value="Rent: " />
+                            <h:outputText value="#{addPropertyBean.rent}"/>
+
+                            <h:panelGroup />
+                            <h:panelGroup />
+                            <h:outputText style="font-weight:bold" value="Number:"/>
+                            <h:outputText value="#{addPropertyBean.number}" />
+                            <h:outputText style="font-weight:bold" value="Street:"/>
+                            <h:outputText value="#{addPropertyBean.street}" />
+                            <h:outputText style="font-weight:bold" value="Unit:"/>
+                            <h:outputText value="#{addPropertyBean.unit}" />
+                            <h:outputText style="font-weight:bold" value="City:"/>
+                            <h:outputText value="#{addPropertyBean.city}" />
+                            <h:outputText style="font-weight:bold" value="Province:"/>
+                            <h:outputText value="#{addPropertyBean.province}" />
+                            <h:outputText style="font-weight:bold" value="Postal Code:"/>
+                            <h:outputText value="#{addPropertyBean.postalCode}" />
+                        </h:panelGrid>
+                        
+                        <p:galleria  panelWidth="500" value="#{addPropertyBean.imageIds}" var="imageId">
+                            <p:graphicImage value="#{addPropertyBean.streamedImage}" width="500" >
+                                <f:param name="id" value="#{imageId}" />
+                            </p:graphicImage>
+                        </p:galleria>
+                        <p:commandButton id="submitBtn" action="#{addPropertyBean.addProperty()}"
+                                         value="Add Property"
+                                        />
+                    </p:panel>
+                </p:tab>
+            </p:wizard>
+            <p:commandButton id="backToMenu" action="#{accountMenuBean.backToMenu()}" value="Back to Menu" />
+        </h:form>
+        
+    </h:body>
+</html>
+

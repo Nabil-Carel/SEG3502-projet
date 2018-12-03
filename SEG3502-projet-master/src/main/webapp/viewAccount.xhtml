@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>Search Results</title>
+    </h:head>
+    <h:body>
+        <p:tooltip showEvent="focus" hideEvent="blur"  />
+        <p:growl autoUpdate="true"/>
+        <h:form>
+            <p:panel >
+                <p:tab title="results">
+                    <p:panel id="Confirmation" header="Account Info">
+                        <h:panelGrid  columns="4">
+                            <h:outputText style="font-weight:bold" value="EmailId: " />
+                            <h:outputText value="#{userProfileBean.getUser().getEmailId()}" />
+                            <h:outputText style="font-weight:bold" value="FirstName: " />
+                            <h:outputText value="#{userProfileBean.getUser().getFirstName()}"/>
+                            <h:outputText style="font-weight:bold" value="LastName: " />
+                            <h:outputText value="#{userProfileBean.getUser().getLastName()}"/>
+                            <h:outputText style="font-weight:bold" value="Phone: " />
+                            <h:outputText value="#{userProfileBean.getUser().getPhone()}"/>
+                            <h:outputText style="font-weight:bold" value="Date of Birth: " />
+                            <h:outputText value="#{userProfileBean.getUser().getDob()}"/>
+
+                            <h:outputText style="font-weight:bold" value="Number:"/>
+                            <h:outputText value="#{userProfileBean.getUser().getAddress().getNumber()}" />
+                            <h:outputText style="font-weight:bold" value="Street:"/>
+                            <h:outputText value="#{userProfileBean.getUser().getAddress().getName()}" />
+                            <h:outputText style="font-weight:bold" value="Unit:"/>
+                            <h:outputText value="#{userProfileBean.getUser().getAddress().getUnit()}" />
+                            <h:outputText style="font-weight:bold" value="City:"/>
+                            <h:outputText value="#{userProfileBean.getUser().getAddress().getCity()}" />
+                            <h:outputText style="font-weight:bold" value="Province:"/>
+                            <h:outputText value="#{userProfileBean.getUser().getAddress().getProvince()}" />
+                            <h:outputText style="font-weight:bold" value="Postal Code:"/>
+                            <h:outputText value="#{userProfileBean.getUser().getAddress().getPostalCode()}" />
+                        </h:panelGrid>
+                        <h:panelGrid  columns="2">
+                            <h:outputText style="font-weight:bold" value="Bio: " />
+                            <h:inputTextarea cols="70" rows="10" readonly="true" value="#{userProfileBean.bio}" />
+                        </h:panelGrid>
+                        <h:form>
+                            <p:galleria  panelWidth="500" value="#{signInBean.imagesIds}" var="imageId" showCaption="true">
+                                <p:graphicImage value="#{signInBean.streamedImage}" width="500" >
+                                    <f:param name="id" value="#{imageId}" />
+                                </p:graphicImage>
+                            </p:galleria>
+                        </h:form>
+
+
+
+
+
+
+
+
+
+
+                        <h:commandLink id="backToMenu" onclick="history.go(-1)" value="Back to Menu" />                         
+
+                    </p:panel>
+                </p:tab>
+
+            </p:panel >
+        </h:form>
+
+
+
+
+
+
+    </h:body>
+</html>
