@@ -52,7 +52,7 @@
                     <p:commandButton value=" Login" action="#{signInBean.login()}"  />
 
                 </h:panelGrid>
-                <h:commandLink id="backToMenu" onclick="history.go(-1)" value="Back" immediate="true" />
+                <h:commandLink id="backToMenu" action="#{userProfileBean.signIn()}" value="Back" immediate="true" />
             </p:panel >
         </h:form>
 

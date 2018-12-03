@@ -5,7 +5,6 @@
  */
 package beans;
 
-
 import java.io.IOException;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -14,14 +13,9 @@ import java.util.ArrayList;
 
 import java.util.Collection;
 
-
-
-
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
-
-
 
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.StreamedContent;
@@ -34,7 +28,6 @@ import persistence.UserProfile;
  */
 @Named(value = "signInBean")
 @SessionScoped
-
 
 public class SignInBean implements Serializable {
 
@@ -53,7 +46,7 @@ public class SignInBean implements Serializable {
     private Image[] imagesArray;
     private Integer index = 0;
     private StreamedContent streamedImg;
-   
+
     /**
      * Creates a new instance of SignInBean
      */
@@ -61,10 +54,6 @@ public class SignInBean implements Serializable {
 
     }
 
-  
- 
-
-   
     public String viewAccount() {
         return "viewAccount?faces-redirect=true";
     }
@@ -83,7 +72,7 @@ public class SignInBean implements Serializable {
     }
 
     //throws InterruptedException
-    public String login()  throws IOException {
+    public String login() throws IOException {
         FacesMessage message = null;
         boolean loggedIn = false;
 
@@ -95,34 +84,32 @@ public class SignInBean implements Serializable {
         userProfileBean.setUser(user);
         String accountInfo = null;
 
-        if (getEmailId() != null && getUser().getEmailId().equals(getEmailId()) && getInputPassword() != null && getUser().getPassword().equals(getInputPassword())) {
+         if (user != null && getEmailId() != null && getUser().getEmailId().equals(getEmailId()) && getInputPassword() != null && getUser().getPassword().equals(getInputPassword())) {
             loggedIn = true;
             message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Welcome", getUser().getFirstName());
             //userProfileBean.initialiseUserVariables();
             accountInfo = accountMenu();
 //            setImagesArray(getUser().getPictures().toArray(new Image[0]));
-           
+
 //           for(int i = 0; i< imagesArray.length;i++){
-               //
-             //  imagesIds.add(imagesArray[i].getId().toString());
-         // }
-          // System.out.println(user);
-          // System.out.println(imagesList.size());
-          // System.out.println("accountInfo "+accountInfo);
-            
-            
+            //
+            //  imagesIds.add(imagesArray[i].getId().toString());
+            // }
+            // System.out.println(user);
+            // System.out.println(imagesList.size());
+            // System.out.println("accountInfo "+accountInfo);
         } else {
             loggedIn = false;
-            message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Loggin Error", "Invalid email or password!");
-            accountInfo = "signIn";
+            message = new FacesMessage(FacesMessage.SEVERITY_WARN,  "Invalid email or password!","");
+            accountInfo = "signIn?faces-redirect=true";
         }
 
         FacesContext.getCurrentInstance().addMessage(null, message);
         PrimeFaces.current().ajax().addCallbackParam("loggedIn", loggedIn);
         return accountInfo;
     }
-    
-   /* public StreamedContent getStreamedImage() {
+
+    /* public StreamedContent getStreamedImage() {
         FacesContext context = FacesContext.getCurrentInstance();
         //System.out.println("wrong way");
         if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
@@ -137,9 +124,6 @@ public class SignInBean implements Serializable {
                     new ByteArrayInputStream(image.getContents()), image.getType());
         }
     }*/
-
-  
-
     /**
      * @return the emailId
      */
@@ -238,10 +222,11 @@ public class SignInBean implements Serializable {
     public void setImagesArray(Image[] imagesArray) {
         this.imagesArray = imagesArray;
     }
-    
-    public StreamedContent getStreamedImg(){
+
+    public StreamedContent getStreamedImg() {
         return streamedImg;
     }
+
     private int getIndex() {
         return index++;
     }

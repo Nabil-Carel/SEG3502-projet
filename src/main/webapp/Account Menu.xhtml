@@ -19,9 +19,10 @@
                 <p:tab title="Account Menu">
                     <p:panel id="Account" header="Account">
                         <h:panelGrid  columns="1">
-                            <p:commandButton id="deleteAccount" action="#{accountMenuBean.deleteAccount()}" value="Delete Account" />
+                            <p:commandButton id="deleteAccount" action="#{userProfileBean.deleteAccount()}" value="Delete Account" />
                             <p:commandButton id="viewAccount" action="#{signInBean.viewAccount()}" value="View Account" />
-                            <p:commandButton id="logout" action="#{userProfileBean.logout()}" value="Logout" />                           
+                            <p:commandButton id="logout" action="#{userProfileBean.logout()}" value="Logout" />    
+                            <p:commandButton id="updateAccount" action="#{accountMenuBean.updateAccount()}" value="UpdateAccount" />   
                         </h:panelGrid>
 
 
@@ -42,7 +43,7 @@
                         </h:panelGrid>
                     </p:panel>
 
-                   
+
                 </p:tab>
 
             </p:panel >

@@ -48,6 +48,11 @@ public class AccountMenuBean implements Serializable {
         return null;
 
     }
+    
+    public String updateAccount() {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Not implemented yet!"));
+        return null;
+    }
 
     public String viewProperties() {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Not implemented yet!"));

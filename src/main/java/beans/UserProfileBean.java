@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
@@ -117,6 +118,7 @@ public class UserProfileBean implements Serializable {
     private ArrayList<String> imagesIds;
     @Resource
     private UserTransaction ut;
+    private boolean signedIn;
 
     // private Collection<Image> imagesCollection;
     // private ArrayList<StreamedContent> imagesList;
@@ -136,6 +138,7 @@ public class UserProfileBean implements Serializable {
         //images = new TreeMap<>();
         imagesIds = new ArrayList<>();
         imagesList = new ArrayList<>();
+        signedIn = false;
     }
 
     /**
@@ -351,23 +354,23 @@ public class UserProfileBean implements Serializable {
     }
 
     public String viewProperty(String index) {
-       
+
         imagesList.clear();
         getImagesIds().clear();
         setProperty(getProperties().get(Integer.parseInt(index)));
-        
+
         setImagesCollection(getProperty().getPictures());
 
         //System.out.println("index "+getProperty().getPictures());
         //  
         getImagesList().addAll(getImagesCollection());
-        
-        for (int i = 0; i<getImagesList().size(); i++) {
+
+        for (int i = 0; i < getImagesList().size(); i++) {
             getImagesIds().add(getImagesList().get(i).getId().toString());
-            System.out.println("imagesId    "+imagesIds);
+            System.out.println("imagesId    " + imagesIds);
             //System.out.println("forloop " + getImagesArray()[i].getId().toString());
         }
-       // System.out.println("imagesAray " + Arrays.toString(getImagesArray()));
+        // System.out.println("imagesAray " + Arrays.toString(getImagesArray()));
 
         return "viewProperty?faces-redirect=true";
     }
@@ -399,7 +402,7 @@ public class UserProfileBean implements Serializable {
 
         return "viewProperties?faces-redirect=true";
     }
-    
+
     /*public String loadUpdateMenu(String row){
        
         return "updatePropertyMenu?faces-redirect=true";
@@ -408,13 +411,10 @@ public class UserProfileBean implements Serializable {
     public String updatePropertyWithOldPicutres(){
         return "updateWithOldPictures?faces-redirect=true";
     }*/
-    
-    public String updatePropertyWithNewPictures(String row){
-         addPropertyBean.setIndex(row);
+    public String updatePropertyWithNewPictures(String row) {
+        addPropertyBean.setIndex(row);
         return "updatePropertyWithNewPictures?faces-redirect=true";
     }
-    
-    
 
     /**
      * @return the imageIds
@@ -574,8 +574,9 @@ public class UserProfileBean implements Serializable {
         setUser(findUser(getEmailId()));
 
         String accountInfo = null;
-
-        if (getEmailId() != null && getUser().getEmailId().equals(getEmailId()) && getInputPassword() != null && getUser().getPassword().equals(getInputPassword())) {
+        if (user == null) {
+            message = new FacesMessage(FacesMessage.SEVERITY_WARN, "No existent Account", "");
+        } else if (getEmailId() != null && getUser().getEmailId().equals(getEmailId()) && getInputPassword() != null && getUser().getPassword().equals(getInputPassword())) {
             loggedIn = true;
             message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Welcome", getUser().getFirstName());
             //userProfileBean.initialiseUserVariables();
@@ -583,11 +584,9 @@ public class UserProfileBean implements Serializable {
 
         } else {
             loggedIn = false;
-            if(emailId != null) {
-                 message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error", "Invalid email or password!");
-                 System.out.println("emailId "+emailId);
-            }
-           
+
+            message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error", "Invalid email or password!");
+
             accountInfo = "signIn?faces-redirect=true";
         }
 
@@ -714,11 +713,13 @@ public class UserProfileBean implements Serializable {
     // }
     //***************************** Navigation Methods ************************************************
     public String signIn() {
-        return "signIn";
+        
+        
+        return "signIn?faces-redirect=true";
     }
 
     public String createAccount() {
-        return "index?faces-redirect=true";
+        return "index";
     }
 
     public String logout() {
@@ -726,6 +727,7 @@ public class UserProfileBean implements Serializable {
         setUser(null);
 
         setEmailAlreadyInDB(false);
+        setSignedIn(false);
         return "signIn?faces-redirect=true";
     }
 
@@ -806,8 +808,6 @@ public class UserProfileBean implements Serializable {
         this.imagesCollection = imagesCollection;
     }
 
-    
-
     /**
      * @return the imagesIds
      */
@@ -832,8 +832,6 @@ public class UserProfileBean implements Serializable {
     public static void setSerialVersionUID(long aSerialVersionUID) {
         serialVersionUID = aSerialVersionUID;
     }
-
-   
 
     /**
      * @return the ut
@@ -862,7 +860,7 @@ public class UserProfileBean implements Serializable {
     public void setImagesList(ArrayList<Image> imagesList) {
         this.imagesList = imagesList;
     }
-    
+
     public String deleteAccount() {
         try {
             getUt().begin();
@@ -873,12 +871,26 @@ public class UserProfileBean implements Serializable {
             getUt().commit();
             setProperties(findProperty(getEm(), getUser().getEmailId()));
             setPropertiesIds(new ArrayList<>());
-        } catch (NotSupportedException|SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException ex) {
+        } catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException ex) {
             Logger.getLogger(UserProfileBean.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("exception");
             throw new RuntimeException(ex);
-        } 
-        return "menu";
+        }
+        return "menu?faces-redirect=true";
+    }
+
+    /**
+     * @return the signedIn
+     */
+    public boolean isSignedIn() {
+        return signedIn;
+    }
+
+    /**
+     * @param signedIn the signedIn to set
+     */
+    public void setSignedIn(boolean signedIn) {
+        this.signedIn = signedIn;
     }
 
 }
