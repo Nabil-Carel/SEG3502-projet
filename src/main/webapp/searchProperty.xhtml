@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>Search Property</title>
+    </h:head>
+    <h:body>
+        <p:tooltip showEvent="focus" hideEvent="blur"  />
+        <p:growl autoUpdate="true"/>
+        <h:form>
+            <p:messages id="messages" showDetail="true" closable="true">
+                <p:autoUpdate />
+            </p:messages> 
+
+            <p:panel id="searchProperty" header="Search Property">
+                <h:panelGrid  columns="2">
+                    <h:outputText style="font-weight:bold" value="Number Of Bedrooms: " />
+                    <p:inputText id="numberOfBedrooms"
+                                 value="#{searchPropertyBean.numberOfBedrooms}"/>
+                    <h:outputText style="font-weight:bold" value="Number Of Bathrooms: " />
+                    <p:inputText id="numberOfBathrooms"
+                                 value="#{searchPropertyBean.numberOfBathrooms}"/>
+                    <h:outputText style="font-weight:bold" value="Rent: " />
+                    <p:inputText id="rent"
+                                 value="#{searchPropertyBean.rent}"/>
+                    <h:outputText style="font-weight:bold" value="Street: "/>
+                    <p:inputText id="street"
+                                 value="#{searchPropertyBean.street}"/>
+                    <h:outputText style="font-weight:bold" value="City: "/>
+                    <p:inputText id="city"
+                                 value="#{searchPropertyBean.city}"/>
+                    <h:outputText style="font-weight:bold" value="Province: "/>
+                    <p:inputText id="province"
+                                 value="#{searchPropertyBean.province}"/>
+                    <h:outputText style="font-weight:bold" value="Owner: "/>
+                    <p:inputText id="owner"
+                                 value="#{searchPropertyBean.owner}"/>
+                </h:panelGrid>
+
+                <p:commandButton id="submitBtn" action="#{searchPropertyBean.submit()}"
+                                 value="Submit"
+                                 onclick="PF('bui').show()" oncomplete="PF('bui').hide()"/>
+            </p:panel>
+            
+            <p:panel id="viewProperties" header="Properties">
+                <h:form>
+
+                    <p:dataTable  value="#{searchPropertyBean.getProperties()}" var="property" rowIndexVar="row">
+                        <p:column headerText="Property Name">
+                            <p:commandButton id="visiting" action="#{addToVisitingListBean.visitProperty(property.id)}" value="#{property.getPropertyName()}" />
+                        </p:column>
+                        <p:column headerText="Rent">
+                            <h:outputText value="#{property.getRent()}" />
+                        </p:column>
+                        <p:column headerText="Province">
+                            <h:outputText value="#{property.getAddress().province}" />
+                        </p:column>
+                        <p:column headerText="City">
+                            <h:outputText value="#{property.getAddress().city}" />
+                        </p:column>
+                        <p:column headerText="Street">
+                            <h:outputText value="#{property.getAddress().name}" />
+                        </p:column>
+                    </p:dataTable> 
+
+                </h:form>
+            
+            </p:panel>
+
+
+            <p:commandButton id="backToMenu" action="#{accountMenuBean.backToMenu()}" value="Back to Menu" />
+
+        </h:form>
+
+    </h:body>
+</html>
+

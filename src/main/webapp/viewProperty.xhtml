@@ -42,25 +42,23 @@
                     <h:outputText style="font-weight:bold" value="Postal Code:"/>
                     <h:outputText value="#{userProfileBean.property.address.postalCode}" />
                 </h:panelGrid>
-                <h:form>
+
+                    <ui:repeat  value="#{userProfileBean.imagesIds}" var="imageId">
+                        <p:graphicImage value="#{userProfileBean.getStreamedImage()}" width="500" >
+                            <f:param name="id" value="#{imageId}" />
+                        </p:graphicImage>
+                    </ui:repeat>
                     <p:galleria  panelWidth="500" value="#{userProfileBean.imagesIds}" var="imageId" showCaption="true">
-                    <p:graphicImage value="#{userProfileBean.getStreamedImage()}" width="500" >
-                        <f:param name="id" value="#{imageId}" />
-                    </p:graphicImage>
-                </p:galleria>
-                </h:form>
+                        <p:graphicImage value="#{userProfileBean.getStreamedImage()}" width="500" >
+                            <f:param name="id" value="#{imageId}" />
+                        </p:graphicImage>
+                    </p:galleria>
                 
                 <p:commandButton id="submitBtn" action="#{userProfileBean.loadProperties()}"
                                  value="Back"
                                  onclick="PF('bui').show()" oncomplete="PF('bui').hide()"/>
             </p:panel>
-
         </h:form>
-
-
-
-
-
 
     </h:body>
 </html>

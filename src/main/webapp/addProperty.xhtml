@@ -166,7 +166,7 @@
                             <h:outputText style="font-weight:bold" value="Postal Code:"/>
                             <h:outputText value="#{addPropertyBean.postalCode}" />
                         </h:panelGrid>
-
+                        
                         <p:galleria  panelWidth="500" value="#{addPropertyBean.imageIds}" var="imageId">
                             <p:graphicImage value="#{addPropertyBean.streamedImage}" width="500" >
                                 <f:param name="id" value="#{imageId}" />
@@ -177,14 +177,10 @@
                                          onclick="PF('bui').show()" oncomplete="PF('bui').hide()"/>
                     </p:panel>
                 </p:tab>
-
-
-
-
             </p:wizard>
-
-
+            <p:commandButton id="backToMenu" action="#{accountMenuBean.backToMenu()}" value="Back to Menu" />
         </h:form>
+        
     </h:body>
 </html>
 
