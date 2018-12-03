@@ -11,6 +11,7 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 
 /**
  *
@@ -21,6 +22,10 @@ import javax.faces.context.FacesContext;
 public class AccountMenuBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    @Inject
+    private AddPropertyBean addPropertyBean;
+
 
     /**
      * Creates a new instance of AccountMenuBean
@@ -36,6 +41,19 @@ public class AccountMenuBean implements Serializable {
     public String viewAccount() {
         //implemented in signInBean
         return null;
+
+
+    }
+    
+    public String updateAccount() {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Not implemented yet!"));
+        return null;
+    }
+
+    public String viewProperties() {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "Not implemented yet!"));
+        return null;
+
     }
 
     public String searchProperty() {
@@ -43,7 +61,9 @@ public class AccountMenuBean implements Serializable {
     }
 
     public String addProperty() {
-        return "addProperty";
+        addPropertyBean.getImages().clear();
+        addPropertyBean.getImagesCollection().clear();
+        return "addProperty?faces-redirect=true";
     }
 
     public String deleteAccount() {
@@ -52,7 +72,7 @@ public class AccountMenuBean implements Serializable {
     }
 
     public String backToMenu() {
-        return "Account Menu";
+        return "Account Menu?faces-redirect=true";
     }
 
 }

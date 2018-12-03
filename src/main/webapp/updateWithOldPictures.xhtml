@@ -106,34 +106,7 @@
 
 
                     </p:panel>
-                    <p:panel header="Pictures">
-                        <p:commandButton value="Add Pictures" onclick="PF('picturesDialog').show();"
-                                         type="button"
-                                         title="Click to upload some pictures"/>
-
-                        <p:blockUI block="form1"  widgetVar="bui">
-                            Processing<br />
-                            <p:graphicImage width="100pt" value="/resources/images/ajax_loader.gif"/>
-                        </p:blockUI>
-                        <p:dialog id="pictDialog" header="Upload Pictures" 
-                                  widgetVar="picturesDialog"  position="right">
-                            <h:form enctype="multipart/form-data">
-                                <p:fileUpload
-                                    multiple="true"
-                                    auto="false"
-                                    fileUploadListener="#{addPropertyBean.handleUserPicUpload}"
-                                    mode="advanced" 
-                                    dragDropSupport="true" 
-                                    allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
-                                    invalidFileMessage="Only gif, jpg or png type images are allowed"
-                                    sizeLimit="1048576"
-                                    oncomplete="PF('picturesDialog').hide()"
-                                    invalidSizeMessage="File size should not exceed 1MB"/>    
-                            </h:form>
-
-                        </p:dialog>
-
-                    </p:panel>
+              
 
                 </p:tab>
                 <p:tab title="Confirmation">
@@ -167,20 +140,20 @@
                             <h:outputText value="#{addPropertyBean.postalCode}" />
                         </h:panelGrid>
                         
-                        <p:galleria  panelWidth="500" value="#{addPropertyBean.imageIds}" var="imageId">
-                            <p:graphicImage value="#{addPropertyBean.streamedImage}" width="500" >
-                                <f:param name="id" value="#{imageId}" />
-                            </p:graphicImage>
-                        </p:galleria>
-                        <p:commandButton id="submitBtn" action="#{addPropertyBean.addProperty()}"
+                        
+                        <p:commandButton id="submitBtn" action="#{addPropertyBean.addPropertyWithOlderPictures()}"
                                          value="Add Property"
                                         />
                     </p:panel>
                 </p:tab>
+
+
+
+
             </p:wizard>
-            <p:commandButton id="backToMenu" action="#{accountMenuBean.backToMenu()}" value="Back to Menu" />
+
+
         </h:form>
-        
     </h:body>
 </html>
 

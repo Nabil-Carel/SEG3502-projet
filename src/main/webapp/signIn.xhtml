@@ -49,11 +49,13 @@
 
                     <h:outputLabel for="password" value="Password:" />
                     <p:password id="password" value="#{signInBean.inputPassword}" required="true" label="password" />
-
-                    <p:commandButton value=" Login" action="#{signInBean.login()}" />
+                    <p:commandButton value=" Login" action="#{signInBean.login()}"  />
 
                 </h:panelGrid>
-                <p:commandButton id="backToMenu" action="#{userProfileBean.backToMenu()}" value="Back" immediate="true" />
+
+
+                <h:commandLink id="backToMenu" action="#{userProfileBean.signIn()}" value="Back" immediate="true" />
+
             </p:panel >
         </h:form>
 

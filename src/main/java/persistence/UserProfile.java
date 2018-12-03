@@ -246,4 +246,5 @@ public class UserProfile implements Serializable {
     public void setUserProperties(ArrayList<Property> userProperties) {
         this.userProperties = userProperties;
     }
+    
 }

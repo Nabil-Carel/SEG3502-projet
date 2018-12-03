@@ -45,7 +45,7 @@ public class Property implements Serializable {
     private UserProfile user;
     
     private int numberOfOtherRooms;
-   
+   //PERSIST
     @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER, 
             mappedBy="property")
     private Collection<Image> pictures;
@@ -98,6 +98,10 @@ public class Property implements Serializable {
     @Override
     public String toString() {
         return "persistence.Property[ id=" + getId() + " ]";
+    }
+    
+    public void addPicture(Image pim) {
+       this.getPictures().add(pim);
     }
 
     /**

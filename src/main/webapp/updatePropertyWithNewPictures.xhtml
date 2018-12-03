@@ -172,15 +172,19 @@
                                 <f:param name="id" value="#{imageId}" />
                             </p:graphicImage>
                         </p:galleria>
-                        <p:commandButton id="submitBtn" action="#{addPropertyBean.addProperty()}"
-                                         value="Add Property"
+                        <p:commandButton id="submitBtn" action="#{addPropertyBean.updatePropertyWithNewPictures()}"
+                                         value="Update Property"
                                         />
                     </p:panel>
                 </p:tab>
+
+
+
+
             </p:wizard>
-            <p:commandButton id="backToMenu" action="#{accountMenuBean.backToMenu()}" value="Back to Menu" />
+
+
         </h:form>
-        
     </h:body>
 </html>
 
