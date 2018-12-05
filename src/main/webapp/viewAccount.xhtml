@@ -44,24 +44,8 @@
                             <h:outputText style="font-weight:bold" value="Bio: " />
                             <h:inputTextarea cols="70" rows="10" readonly="true" value="#{userProfileBean.bio}" />
                         </h:panelGrid>
-                        <h:form>
-                            <p:galleria  panelWidth="500" value="#{signInBean.imagesIds}" var="imageId" showCaption="true">
-                                <p:graphicImage value="#{signInBean.streamedImage}" width="500" >
-                                    <f:param name="id" value="#{imageId}" />
-                                </p:graphicImage>
-                            </p:galleria>
-                        </h:form>
-
-
-
-
-
-
-
-
-
-
-                        <h:commandLink id="backToMenu" onclick="history.go(-1)" value="Back to Menu" />                         
+                        
+                        <h:commandLink id="backToMenu" action ="#{accountMenuBean.backToMenu()}" value="Back to Menu" />                         
 
                     </p:panel>
                 </p:tab>
